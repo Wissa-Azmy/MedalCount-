@@ -37,6 +37,7 @@ final class MainViewController: UIViewController {
 
   // MARK: - Properties
   private let dataStore = GamesDataStore()
+  lazy var slideInTransitioningDelegate = SlideInPresentationManager()
   private var presentedGames: Games? {
     didSet {
       configurePresentedGames()
@@ -51,18 +52,29 @@ final class MainViewController: UIViewController {
   }
 
   // MARK: - Navigation
+  
   override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
     if let controller = segue.destination as? GamesTableViewController {
       if segue.identifier == "SummerSegue" {
         controller.gamesArray = dataStore.allGames.summer
+        slideInTransitioningDelegate.direction = .left
       } else if segue.identifier == "WinterSegue" {
         controller.gamesArray = dataStore.allGames.winter
+        slideInTransitioningDelegate.direction = .right
       }
+      
       controller.delegate = self
+      controller.transitioningDelegate = slideInTransitioningDelegate
+      controller.modalPresentationStyle = .custom
+      
     } else if let controller = segue.destination as? MedalCountViewController {
       controller.medalWinners = presentedGames?.medalWinners
+      slideInTransitioningDelegate.direction = .bottom
+      controller.transitioningDelegate = slideInTransitioningDelegate
+      controller.modalPresentationStyle = .custom
     }
   }
+  
 }
 
 // MARK: - Private
