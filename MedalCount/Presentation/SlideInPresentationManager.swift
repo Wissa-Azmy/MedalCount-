@@ -74,4 +74,9 @@ extension SlideInPresentationManager: UIAdaptivePresentationControllerDelegate {
       return .none
     }
   }
+  
+  func presentationController(_ controller: UIPresentationController, viewControllerForAdaptivePresentationStyle style: UIModalPresentationStyle) -> UIViewController? {
+    guard case(.overFullScreen) = style else { return nil }
+    return UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "RotateViewController")
+  }
 }
