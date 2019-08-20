@@ -37,7 +37,7 @@ enum PresentationDirection {
 
 class SlideInPresentationManager: NSObject {
   var direction: PresentationDirection = .left
-  
+  var disableCompactHeight = false
 }
 
 // MARK: - UIViewControllerTransitioningDelegate
@@ -45,6 +45,7 @@ extension SlideInPresentationManager: UIViewControllerTransitioningDelegate {
   // Here you instantiate a SlideInPresentationController with the direction from SlideInPresentationManager. You return it to use for the presentation.
   func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
     let presentationController = SlideInPresentationController(presentedViewController: presented, presenting: presenting, direction: direction)
+    presentationController.delegate = self
     return presentationController
   }
   
@@ -55,5 +56,22 @@ extension SlideInPresentationManager: UIViewControllerTransitioningDelegate {
   // Returns the animation controller for dismissing the view controller
   func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
     return SlideInPresentationAnimator(direction: direction, isPresentation: false)
+  }
+}
+
+
+// MARK: - UIAdaptivePresentationControllerDelegate
+extension SlideInPresentationManager: UIAdaptivePresentationControllerDelegate {
+  // This method accepts a UIPresentationController and a UITraitCollection and returns the desired UIModalPresentationStyle.
+  func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
+    // Check if verticalSizeClass equals .compact and if compact height is disabled for this presentation.
+    if traitCollection.verticalSizeClass == .compact && disableCompactHeight {
+      // If yes, it returns a presentation style of .overFullScreen.
+      // This way, the presented view will cover the entire screen — not just 2/3 as defined in SlideInPresentationController.
+      return .overFullScreen
+    } else {
+      // If no, it returns .none, to stay with the implementation of UIPresentationController.
+      return .none
+    }
   }
 }

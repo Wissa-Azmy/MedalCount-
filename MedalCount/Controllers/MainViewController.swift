@@ -62,6 +62,7 @@ final class MainViewController: UIViewController {
         controller.gamesArray = dataStore.allGames.winter
         slideInTransitioningDelegate.direction = .right
       }
+      slideInTransitioningDelegate.disableCompactHeight = false
       
       controller.delegate = self
       controller.transitioningDelegate = slideInTransitioningDelegate
@@ -70,6 +71,7 @@ final class MainViewController: UIViewController {
     } else if let controller = segue.destination as? MedalCountViewController {
       controller.medalWinners = presentedGames?.medalWinners
       slideInTransitioningDelegate.direction = .bottom
+      slideInTransitioningDelegate.disableCompactHeight = true
       controller.transitioningDelegate = slideInTransitioningDelegate
       controller.modalPresentationStyle = .custom
     }
